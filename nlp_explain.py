@@ -3,11 +3,12 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import time
 t1=time.time()
-train = pd.read_csv('input/train_set.csv')
-test = pd.read_csv('input/test_set.csv')
-test_id = pd.read_csv('input/test_set.csv')[["id"]].copy()
+train = pd.read_csv('input/train_set.csv')[:100]
+test = pd.read_csv('input/test_set.csv')[:10]
+test_id = pd.read_csv('input/test_set.csv')[["id"]][:10].copy()
 
 column="word_seg"
+
 # 用来查找数据的维度
 n = train.shape
 # 将原始文档集合转换为TF-IDF特征矩阵
@@ -21,8 +22,7 @@ test_term_doc = vec.transform(test[column])
 
 y=(train["class"]-1).astype(int)
 # 创建逻辑回归分类器
-clf = LogisticRegression(C=4,random_state=7,class_weight='balanced',solver="sag",
-                         multi_class="multinomial",n_jobs=-1)
+clf = LogisticRegression(C=4, dual=True)
 clf.fit(trn_term_doc, y)
 # 得到预测的概率
 preds=clf.predict_proba(test_term_doc)
